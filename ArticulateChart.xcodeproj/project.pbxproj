@@ -9,10 +9,13 @@
 /* Begin PBXBuildFile section */
 		19B8BADD1A20F35C00A84169 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 19B8BADC1A20F35C00A84169 /* AppDelegate.m */; };
 		19B8BADF1A20F35C00A84169 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 19B8BADE1A20F35C00A84169 /* main.m */; };
-		19B8BAE21A20F35C00A84169 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 19B8BAE11A20F35C00A84169 /* ViewController.m */; };
+		19B8BAE21A20F35C00A84169 /* DTGChartViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 19B8BAE11A20F35C00A84169 /* DTGChartViewController.m */; };
 		19B8BAE41A20F35C00A84169 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 19B8BAE31A20F35C00A84169 /* Images.xcassets */; };
 		19B8BAE71A20F35C00A84169 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 19B8BAE51A20F35C00A84169 /* Main.storyboard */; };
 		19B8BAF31A20F35C00A84169 /* ArticulateChartTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 19B8BAF21A20F35C00A84169 /* ArticulateChartTests.m */; };
+		19B8BB011A20F3B200A84169 /* DTGChartView.m in Sources */ = {isa = PBXBuildFile; fileRef = 19B8BB001A20F3B200A84169 /* DTGChartView.m */; };
+		19B8BB021A20FBD000A84169 /* stockprices.json in Resources */ = {isa = PBXBuildFile; fileRef = 19B8BAFD1A20F37400A84169 /* stockprices.json */; };
+		19B8BB041A2113C800A84169 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 19B8BB031A2113C800A84169 /* QuartzCore.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -31,13 +34,17 @@
 		19B8BADB1A20F35C00A84169 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		19B8BADC1A20F35C00A84169 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		19B8BADE1A20F35C00A84169 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		19B8BAE01A20F35C00A84169 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		19B8BAE11A20F35C00A84169 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		19B8BAE01A20F35C00A84169 /* DTGChartViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DTGChartViewController.h; sourceTree = "<group>"; };
+		19B8BAE11A20F35C00A84169 /* DTGChartViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DTGChartViewController.m; sourceTree = "<group>"; };
 		19B8BAE31A20F35C00A84169 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		19B8BAE61A20F35C00A84169 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		19B8BAEC1A20F35C00A84169 /* ArticulateChartTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ArticulateChartTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		19B8BAF11A20F35C00A84169 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		19B8BAF21A20F35C00A84169 /* ArticulateChartTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ArticulateChartTests.m; sourceTree = "<group>"; };
+		19B8BAFD1A20F37400A84169 /* stockprices.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = stockprices.json; sourceTree = "<group>"; };
+		19B8BAFF1A20F3B200A84169 /* DTGChartView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DTGChartView.h; sourceTree = "<group>"; };
+		19B8BB001A20F3B200A84169 /* DTGChartView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DTGChartView.m; sourceTree = "<group>"; };
+		19B8BB031A2113C800A84169 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -45,6 +52,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				19B8BB041A2113C800A84169 /* QuartzCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,6 +69,7 @@
 		19B8BACD1A20F35C00A84169 = {
 			isa = PBXGroup;
 			children = (
+				19B8BB031A2113C800A84169 /* QuartzCore.framework */,
 				19B8BAD81A20F35C00A84169 /* ArticulateChart */,
 				19B8BAEF1A20F35C00A84169 /* ArticulateChartTests */,
 				19B8BAD71A20F35C00A84169 /* Products */,
@@ -79,10 +88,13 @@
 		19B8BAD81A20F35C00A84169 /* ArticulateChart */ = {
 			isa = PBXGroup;
 			children = (
+				19B8BAFC1A20F37400A84169 /* Resources */,
 				19B8BADB1A20F35C00A84169 /* AppDelegate.h */,
 				19B8BADC1A20F35C00A84169 /* AppDelegate.m */,
-				19B8BAE01A20F35C00A84169 /* ViewController.h */,
-				19B8BAE11A20F35C00A84169 /* ViewController.m */,
+				19B8BAE01A20F35C00A84169 /* DTGChartViewController.h */,
+				19B8BAE11A20F35C00A84169 /* DTGChartViewController.m */,
+				19B8BAFF1A20F3B200A84169 /* DTGChartView.h */,
+				19B8BB001A20F3B200A84169 /* DTGChartView.m */,
 				19B8BAE31A20F35C00A84169 /* Images.xcassets */,
 				19B8BAE51A20F35C00A84169 /* Main.storyboard */,
 				19B8BAD91A20F35C00A84169 /* Supporting Files */,
@@ -114,6 +126,14 @@
 				19B8BAF11A20F35C00A84169 /* Info.plist */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		19B8BAFC1A20F37400A84169 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				19B8BAFD1A20F37400A84169 /* stockprices.json */,
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -197,6 +217,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				19B8BAE41A20F35C00A84169 /* Images.xcassets in Resources */,
+				19B8BB021A20FBD000A84169 /* stockprices.json in Resources */,
 				19B8BAE71A20F35C00A84169 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -215,7 +236,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				19B8BAE21A20F35C00A84169 /* ViewController.m in Sources */,
+				19B8BAE21A20F35C00A84169 /* DTGChartViewController.m in Sources */,
+				19B8BB011A20F3B200A84169 /* DTGChartView.m in Sources */,
 				19B8BADF1A20F35C00A84169 /* main.m in Sources */,
 				19B8BADD1A20F35C00A84169 /* AppDelegate.m in Sources */,
 			);

@@ -1,5 +1,5 @@
 //
-//  ViewController.h
+//  DTGChartViewController.h
 //  ArticulateChart
 //
 //  Created by Green2, David on 11/22/14.
@@ -7,9 +7,11 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "DTGChartView.h"
 
-@interface ViewController : NSViewController
+@interface DTGChartViewController : NSViewController
 
+@property (weak) IBOutlet DTGChartView *chartView;
 
 @end
 
