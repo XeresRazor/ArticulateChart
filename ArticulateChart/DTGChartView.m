@@ -31,6 +31,8 @@ static CGFloat chartSectionWidth = 80.0;
 static CGFloat chartSectionHeight = 40.0;
 static CGFloat chartDatePadding = 20.0;
 
+static CGFloat labelFontSize = 12.0;
+
 // Animation timing
 static CGFloat segmentDuration = 0.5;
 
@@ -188,7 +190,6 @@ static CGFloat segmentDuration = 0.5;
 }
 
 -(void)layoutValueLabelsWithStrings:(NSArray *)labelStrings {
-	static CGFloat labelFontSize = 12.0;
 	NSFont *labelFont = [NSFont systemFontOfSize:labelFontSize];
 	
 	for (int i = 0; i < labelStrings.count; i++) {
@@ -207,7 +208,6 @@ static CGFloat segmentDuration = 0.5;
 }
 
 -(void)layoutDateLabelsWithStrings:(NSArray *)labelStrings {
-	static CGFloat labelFontSize = 12.0;
 	NSFont *labelFont = [NSFont systemFontOfSize:labelFontSize];
 	CGFloat labelBaseline = self.gridLayer.frame.size.height - chartDatePadding;// + chartElementPadding / 2.0;
 	
@@ -257,10 +257,15 @@ static CGFloat segmentDuration = 0.5;
 	// Add the animated dots and price labels
 	for (int i = 0; i < self.stockClosingValues.count; i++) {
 		CAShapeLayer *dotLayer = [self dotLayerForIndex:i];
-		NSString *animKey = [NSString stringWithFormat:@"dot%d", i];
-		[dotLayer addAnimation:[self dotAnimationForIndex:i] forKey:animKey];
-		
+		NSString *dotAnimKey = [NSString stringWithFormat:@"dot%d", i];
+		[dotLayer addAnimation:[self dotAnimationForIndex:i] forKey:dotAnimKey];
 		[self.chartLayer addSublayer:dotLayer];
+		
+		CATextLayer *labelLayer = [self textLayerForIndex:i];
+		NSString *textAnimKey = [NSString stringWithFormat:@"text%d", i];
+		[labelLayer addAnimation:[self dotAnimationForIndex:i] forKey:textAnimKey];
+		[self.chartLayer addSublayer:labelLayer];
+		
 	}
 	
 }
@@ -317,6 +322,42 @@ static CGFloat segmentDuration = 0.5;
 	dotAnimation.fillMode = kCAFillModeBackwards;
 	
 	return dotAnimation;
+}
+
+-(CATextLayer *)textLayerForIndex:(NSInteger)index {
+	CGPoint location = [self coordinateForStockEntry:index];
+	NSFont *labelFont = [NSFont systemFontOfSize:labelFontSize];
+	
+	NSNumberFormatter *currencyFormatter = [[NSNumberFormatter alloc] init];
+	[currencyFormatter setNumberStyle:NSNumberFormatterCurrencyStyle];
+
+	
+	NSString *labelString = [currencyFormatter stringFromNumber:self.stockClosingValues[index]];
+	CGSize labelSize = [labelString sizeWithAttributes:@{NSFontAttributeName : labelFont}];
+	
+	CATextLayer *labelLayer = [[CATextLayer alloc] init];
+	[labelLayer setString:labelString];
+	
+	CGRect labelRect = CGRectMake(location.x - labelSize.width / 2.0 + labelSize.height, location.y - labelSize.height / 2.0, labelSize.width, labelSize.height);
+	labelLayer.frame = labelRect;
+	labelLayer.font = (__bridge CFTypeRef)(labelFont);
+	labelLayer.fontSize = labelFontSize;
+	labelLayer.foregroundColor = [NSColor blackColor].CGColor;
+	labelLayer.backgroundColor = [NSColor whiteColor].CGColor;
+	labelLayer.transform = CATransform3DMakeRotation(M_PI / 2.0, 0.0, 0.0, 1.0);
+	
+	return labelLayer;
+}
+
+-(CABasicAnimation *)textAnimationForIndex:(NSInteger)index {
+	CABasicAnimation *textAnimation = [CABasicAnimation animationWithKeyPath:@"opacity"];
+	textAnimation.duration = 0.2;
+	textAnimation.fromValue = @0.0;
+	textAnimation.toValue = @1.0;
+	textAnimation.beginTime = CACurrentMediaTime() + (index * segmentDuration);
+	textAnimation.fillMode = kCAFillModeBackwards;
+	
+	return textAnimation;
 }
 
 -(CGPoint)coordinateForStockEntry:(NSInteger)index {
