@@ -10,10 +10,6 @@
 
 @implementation DTGChartViewController
 
-- (void)viewDidLoad {
-	[super viewDidLoad];
-}
-
 -(void)viewWillAppear {
 	[super viewWillAppear];
 	
@@ -31,19 +27,14 @@
 		[[NSException exceptionWithName:@"Invalid Resource" reason:@"Stock price data is invalidly formatted." userInfo:nil] raise];
 	}
 	
+	// Configure our view with the dictionary
 	NSDictionary *stocks = (NSDictionary *)stockObject;
-	if ([self.chartView setData:stocks]) {
+	if ([self.chartView configureWithStockDictionary:stocks]) {
 		[self.chartView animateToStockValues];
 	} else {
 		NSLog(@"Chart view was unable to load stock data.");
 		[[NSException exceptionWithName:@"Unable to load Stock data" reason:@"Chart view was unable to load stock data." userInfo:nil] raise];
 	}
-}
-
-- (void)setRepresentedObject:(id)representedObject {
-	[super setRepresentedObject:representedObject];
-
-	// Update the view, if already loaded.
 }
 
 -(void)mouseUp:(NSEvent *)theEvent {

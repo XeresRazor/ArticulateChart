@@ -7,7 +7,20 @@
 //
 
 #import "DTGChartView.h"
+#import "NSArray+ArrayUtils.h"
 #import <QuartzCore/QuartzCore.h>
+
+// Static sizes for laying out the chart
+static CGFloat chartElementPadding = 8.0;
+static CGFloat chartSectionWidth = 80.0;
+static CGFloat chartSectionHeight = 40.0;
+static CGFloat chartDatePadding = 20.0;
+
+static CGFloat labelFontSize = 12.0;
+
+// Animation timing
+static CGFloat animationSegmentDuration = 0.5;
+
 
 #pragma mark - DTGChartView Private Interface -
 @interface DTGChartView ()
@@ -22,21 +35,7 @@
 @property (nonatomic) CGFloat lowestCloseLabelValue;
 @end
 
-
-
 #pragma mark - DTGChartView Implementation -
-// Static sizes for laying out the chart
-static CGFloat chartElementPadding = 8.0;
-static CGFloat chartSectionWidth = 80.0;
-static CGFloat chartSectionHeight = 40.0;
-static CGFloat chartDatePadding = 20.0;
-
-static CGFloat labelFontSize = 12.0;
-
-// Animation timing
-static CGFloat segmentDuration = 0.5;
-
-
 @implementation DTGChartView
 
 -(void)viewWillMoveToSuperview:(NSView *)newSuperview {
@@ -44,7 +43,7 @@ static CGFloat segmentDuration = 0.5;
 	self.layer.backgroundColor = [NSColor whiteColor].CGColor;
 }
 
--(BOOL)setData:(NSDictionary *)data {
+-(BOOL)configureWithStockDictionary:(NSDictionary *)data {
 	NSArray *stockEntries = data[@"stockdata"];
 	if (stockEntries == nil) {
 		NSLog(@"Stock data not found.");
@@ -63,17 +62,9 @@ static CGFloat segmentDuration = 0.5;
 	NSMutableArray *closingValues = [NSMutableArray arrayWithCapacity:stockEntries.count];
 	NSMutableArray *dates = [NSMutableArray arrayWithCapacity:stockEntries.count];
 	
-	NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
-	[dateFormatter setDateFormat:@"yyyy-MM-dd"];
-	
 	for (NSDictionary *entry in stockEntries) {
-		// Parse out the date
-		NSString *dateString = entry[@"date"];
-		NSDate *date = [dateFormatter dateFromString:dateString];
-		
-		// Parse out the closing value
-		NSString *closeString = entry[@"close"];
-		NSNumber *closingNumber = [NSNumber numberWithFloat:closeString.floatValue];
+		NSDate *date = [self dateFromEntry:entry];
+		NSNumber *closingNumber = [self closingValueFromEntry:entry];
 		
 		[dates addObject:date];
 		[closingValues addObject:closingNumber];
@@ -82,12 +73,29 @@ static CGFloat segmentDuration = 0.5;
 	self.stockDates = [dates copy];
 }
 
+-(NSDate *)dateFromEntry:(NSDictionary*)entry {
+	NSDateFormatter *dateFormatter = [[NSDateFormatter alloc] init];
+	[dateFormatter setDateFormat:@"yyyy-MM-dd"];
+	
+	// Parse out the date
+	NSString *dateString = entry[@"date"];
+	NSDate *date = [dateFormatter dateFromString:dateString];
+	
+	return date;
+}
+
+-(NSNumber *)closingValueFromEntry:(NSDictionary *)entry {
+	NSString *closeString = entry[@"close"];
+	NSNumber *closingNumber = [NSNumber numberWithFloat:closeString.floatValue];
+	return closingNumber;
+}
+
 -(void)findDateAndValueRanges {
 	// Find our highest and lowest dates and closing ranges
 	self.firstDate = self.stockDates[0];
 	self.lastDate = self.stockDates[0];
-	self.lowestClose = ((NSNumber *)self.stockClosingValues[0]).floatValue;
-	self.highestClose = ((NSNumber *)self.stockClosingValues[0]).floatValue;
+	self.lowestClose = [self.stockClosingValues numberAtIndex:0].floatValue;
+	self.highestClose = [self.stockClosingValues numberAtIndex:0].floatValue;
 	
 	for (NSDate *date in self.stockDates) {
 		if ([date compare:self.firstDate] == NSOrderedAscending) {
@@ -190,42 +198,56 @@ static CGFloat segmentDuration = 0.5;
 }
 
 -(void)layoutValueLabelsWithStrings:(NSArray *)labelStrings {
-	NSFont *labelFont = [NSFont systemFontOfSize:labelFontSize];
-	
 	for (int i = 0; i < labelStrings.count; i++) {
 		NSString *labelString = labelStrings[i];
-		CGSize labelSize = [labelString sizeWithAttributes:@{NSFontAttributeName : labelFont}];
-		
-		CATextLayer *labelLayer = [[CATextLayer alloc] init];
-		[labelLayer setString:labelString];
-		CGRect labelRect = CGRectMake(chartElementPadding, chartSectionHeight * i, labelSize.width, labelSize.height);
-		labelLayer.frame = labelRect;
-		labelLayer.font = (__bridge CFTypeRef)(labelFont);
-		labelLayer.fontSize = labelFontSize;
-		labelLayer.foregroundColor = [NSColor blackColor].CGColor;
-		[self.gridLayer addSublayer:labelLayer];
+		[self layoutLabelWithString:labelString labelType:LabelTypeValue labelIndex:i];
 	}
 }
 
 -(void)layoutDateLabelsWithStrings:(NSArray *)labelStrings {
-	NSFont *labelFont = [NSFont systemFontOfSize:labelFontSize];
-	CGFloat labelBaseline = self.gridLayer.frame.size.height - chartDatePadding;// + chartElementPadding / 2.0;
-	
 	for (int i = 0; i < labelStrings.count; i++) {
 		NSString *labelString = labelStrings[i];
-		CGSize labelSize = [labelString sizeWithAttributes:@{NSFontAttributeName : labelFont}];
-		labelSize.width = ceilf(labelSize.width);
-		
-		CATextLayer *labelLayer = [[CATextLayer alloc] init];
-		[labelLayer setString:labelString];
-		CGRect labelRect = CGRectMake((i + 1) * chartSectionWidth - labelSize.width / 2.0, labelBaseline, labelSize.width, labelSize.height);
-		labelLayer.frame = labelRect;
-		labelLayer.font = (__bridge CFTypeRef)(labelFont);
-		labelLayer.fontSize = labelFontSize;
-		labelLayer.foregroundColor = [NSColor blueColor].CGColor;
-		[self.gridLayer addSublayer:labelLayer];
+		[self layoutLabelWithString:labelString labelType:LabelTypeDate labelIndex:i];
 	}
 }
+
+typedef NS_ENUM(NSInteger, LabelType) {
+	LabelTypeValue,
+	LabelTypeDate
+};
+
+-(void)layoutLabelWithString:(NSString *)labelString labelType:(LabelType)labelType labelIndex:(NSInteger)i {
+	NSFont *labelFont = [NSFont systemFontOfSize:labelFontSize];
+	CGFloat labelBaseline = self.gridLayer.frame.size.height - chartDatePadding;
+	
+	CGSize labelSize = [labelString sizeWithAttributes:@{NSFontAttributeName : labelFont}];
+	if (labelType == LabelTypeDate) {
+		labelSize.width = ceilf(labelSize.width);
+	} 
+	
+	CATextLayer *labelLayer = [[CATextLayer alloc] init];
+	[labelLayer setString:labelString];
+	
+	CGRect labelRect;
+	if (labelType == LabelTypeValue) {
+		labelRect = CGRectMake(chartElementPadding, chartSectionHeight * i, labelSize.width, labelSize.height);
+	} else if (labelType == LabelTypeDate) {
+		labelRect = CGRectMake((i + 1) * chartSectionWidth - labelSize.width / 2.0, labelBaseline, labelSize.width, labelSize.height);
+	}
+	
+	
+	labelLayer.frame = labelRect;
+	labelLayer.font = (__bridge CFTypeRef)(labelFont);
+	labelLayer.fontSize = labelFontSize;
+	if (labelType == LabelTypeValue) {
+		labelLayer.foregroundColor = [NSColor blueColor].CGColor;
+	} else if (labelType == LabelTypeDate) {
+		labelLayer.foregroundColor = [NSColor blueColor].CGColor;
+	}
+	
+	[self.gridLayer addSublayer:labelLayer];
+}
+
 
 -(void)animateToStockValues {
 	// Remove all of our sublayers so we have a clean canvas
@@ -241,7 +263,7 @@ static CGFloat segmentDuration = 0.5;
 	[self.layer addSublayer:self.chartLayer];
 	
 	// Setup for our animations
-	CGFloat animationDuration = (self.stockClosingValues.count - 1) * segmentDuration;
+	CGFloat animationDuration = (self.stockClosingValues.count - 1) * animationSegmentDuration;
 	
 	// Create our graph
 	CAShapeLayer *lineLayer = [self linePathForStocksInFrame:chartFrame];
@@ -318,7 +340,7 @@ static CGFloat segmentDuration = 0.5;
 	dotAnimation.duration = 0.1;
 	dotAnimation.fromValue = @0.0;
 	dotAnimation.toValue = @1.0;
-	dotAnimation.beginTime = CACurrentMediaTime() + (index * segmentDuration);
+	dotAnimation.beginTime = CACurrentMediaTime() + (index * animationSegmentDuration);
 	dotAnimation.fillMode = kCAFillModeBackwards;
 	
 	return dotAnimation;
@@ -354,7 +376,7 @@ static CGFloat segmentDuration = 0.5;
 	textAnimation.duration = 0.2;
 	textAnimation.fromValue = @0.0;
 	textAnimation.toValue = @1.0;
-	textAnimation.beginTime = CACurrentMediaTime() + (index * segmentDuration);
+	textAnimation.beginTime = CACurrentMediaTime() + (index * animationSegmentDuration);
 	textAnimation.fillMode = kCAFillModeBackwards;
 	
 	return textAnimation;

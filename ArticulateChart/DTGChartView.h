@@ -13,6 +13,6 @@
 /// Instructs the view to load a dataset from a parsed JSON dictionary.
 /// Returns: false if data cannot be loaded.
 
--(BOOL)setData:(NSDictionary *)data;
+-(BOOL)configureWithStockDictionary:(NSDictionary *)data;
 -(void)animateToStockValues;
 @end
