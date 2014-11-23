@@ -362,10 +362,10 @@ static CGFloat segmentDuration = 0.5;
 
 -(CGPoint)coordinateForStockEntry:(NSInteger)index {
 	// X coordinate is a simple multiple of the section width
-	CGFloat x = chartSectionWidth * (index + 1);
+	CGFloat x = chartSectionWidth * (index + 1) + 1.0;
 	// Y coordinate needs to be scaled
 	CGFloat adjustedValue = ((NSNumber *)self.stockClosingValues[index]).floatValue - self.lowestCloseLabelValue;
-	int ySection = (int)(adjustedValue / 5);
+	int ySection = (int)(adjustedValue / 5) + 1.0;
 	CGFloat percentageOfSection = (adjustedValue - (ySection * 5.0)) / 5.0;
 	
 	return CGPointMake(x, percentageOfSection * chartSectionHeight + chartSectionHeight * ySection);
